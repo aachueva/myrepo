@@ -5,39 +5,55 @@ output: html_document
 
 
 ```{r setup, include=FALSE}
+library(devtools)
+install_github("jennybc/googlesheets")
 install.packages("googlesheets")
 library(googlesheets)
 ```
 
 Reading a spreadsheet
 ```{r}
-sheets_url="https://docs.google.com/spreadsheets/d/18KQQd4LY5k8Ucux1MvWCsQGQJlvd0ECTnn-3ixdOKFM/edit#gid=0"
+sheets_url="https://docs.google.com/spreadsheets/d/103vUoftv2dLNZ_FcAz08b5ptIkWN4W2RaFn7VF39FJ8/edit#gid=0"
 gsurl1=gs_url(sheets_url)
 gsurl1
 date_accessed=date()
 date_accessed
 
 ```
+Reading first 2 columns
 
-
-
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+head(gs_read(gsurl1, range = cell_cols(1:2)))
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+How many students:
+```{r}
+dim(gs_read(gsurl1, range = cell_cols(1:2)))[1]
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Create a logical variable for whether students have more than 2 years of R experience
+```{r}
+
+tmp <- gs_read(gsurl1, range = cell_cols(1:3))
+library(dplyr)
+#exp_2yr <-tmp %>% filter(tmp$R>2)
+#tmp %>% filter(tmp$R>2)
+
+result <- with(tmp,as.numeric(tmp$"Years of R experience")>2)
+
+```
+Convert the logical variable from #6 into a factor with labels "Skilled" and "Learning"
+
+```{r}
+
+df<-as.factor(result)
+levels(df)<- c("Skilled", "Learning")
+
+
+```
+
+
+
+
+
+
