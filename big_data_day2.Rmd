@@ -105,15 +105,132 @@ Web scraping
 
 //*[@id="recounttab"]/table/tbody
 
+```{r}
 recount_url = "http://bowtie-bio.sourceforge.net/recount/"
 install.packages("rvest")
 library(rvest)
 htmlfile = read_html(recount_url)
-
-
 nds = html_nodes(htmlfile,                
 xpath='//*[@id="recounttab"]/table')
 dat = html_table(nds)
 dat = as.data.frame(dat)
 head(dat)
+names(dat) =dat[1,]
+dat=dat[-1,]
+```
 
+API
+
+Always check if there is a library for "talking" with the API of interest
+
+```{r}
+install.packages("rfigshare")
+library(rfigshare)
+leeksearch = fs_search("Leek")
+
+length(leeksearch)
+leeksearch[[1]]
+```
+
+
+developer.fb.com
+developer.github.com
+
+check rate limit
+
+dev dictionary - unique to each API
+
+```{r}
+install.packages("httr")
+library(httr)
+query_url = "https://api.github.com/search/repositories?q=created:2014-08-13+language:r+-user:cran"
+
+
+req = GET(query_url)
+names(content(req))
+content(req)
+```
+
+
+
+Web Scraping Lab
+
+//*[@id="biocViews_package_table_wrapper"]/div[3]/div[1]/div/table
+
+Try to use rvest as we did in class to scrape the table.
+
+recount_url = "http://bioconductor.org/packages/release/BiocViews.html#___Software"
+install.packages("rvest")
+library(rvest)
+
+recount_url = "https://raw.githubusercontent.com/SISBID/Module1/gh-pages/labs/bioc-software.html"
+install.packages("rvest")
+library(rvest)
+htmlfile = read_html(recount_url)
+nds = html_nodes(htmlfile,                
+xpath='//*[@id="biocViews_package_table"]')
+dat = html_table(nds)
+dat = as.data.frame(dat)
+head(dat)
+names(dat) =dat[1,]
+dat=dat[-1,]
+```
+
+To make the word cloud:
+Paste the last column of the resulting table into one character vector like this: text = paste(dat[,3], collapse=" ")
+Install the packages you'll need install.packages(c("wordcloud","tm"))
+Make the word cloud wordcloud(text,max.words=50)
+
+```{r}
+text = paste(dat[,3], collapse=" ")
+
+
+```
+
+
+Let's play around with the Ensembl API (http://rest.ensembl.org/) for extracting informtion. This is an open API so you don't need a developer account.
+
+Download information on Oct4 from Ensembl using this call:
+
+```{r}
+install.packages("jsonlite")
+library(jsonlite)
+oct4_dat = fromJSON("http://rest.ensembl.org//lookup/id/ENSG00000204531?content-type=application/json;expand=1")
+```
+Explore the oct4_dat variable that results. Look particularly at oct4_dat$Transcript column by column with the commands 
+```{r}
+
+oct4_dat$Transcript
+
+```
+new<- oct4_dat$Transcript
+table(new)
+head(new)
+
+The Ensembl ID for the gene P53 is ENSG00000141510. How do you think you'd change the command above to look up this gene?
+
+```{r}
+
+
+oct4_dat = fromJSON("http://rest.ensembl.org//lookup/id/ENSG00000141510?content-type=application/json;expand=1")
+
+```
+
+ENSG00000157764
+
+ensembl = useEnsembl(biomart="ensembl", dataset="hsapiens_gene_ensembl")
+domain_location_ENSG00000157764 <- getBM(attributes=c('ensembl_gene_id','ensembl_transcript_id','ensembl_peptide_id','interpro','interpro_start','interpro_end','pfam','pfam_start','pfam_end'), filters ='ensembl_gene_id', values ="ENSG00000157764", mart = ensembl) 
+
+
+Based on the Ensembl docs how would you look up the ensembl id for another gene like BRAF?
+library(biomaRt)
+variation = useEnsembl(biomart="snp", dataset="hsapiens_snp")
+
+rs1333049 <- getBM(attributes=c('refsnp_id','refsnp_source','chr_name','chrom_start','chrom_end','minor_allele','minor_allele_freq','minor_allele_count','consequence_allele_string','ensembl_gene_stable_id','ensembl_transcript_stable_id'),ensembl_gene_stable_id="BRAF" ,filters = 'snp_filter', values ="", mart = variation)
+
+
+
+the actual way of doing this:
+go to to doc page here:https://rest.ensembl.org/documentation/info/symbol_lookup
+
+/lookup/symbol/homo_sapiens/BRCA2?content-type=application/json;expand=1
