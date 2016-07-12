@@ -3,9 +3,24 @@ title: "Untitled"
 output: html_document
 ---
 
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+install.packages("googlesheets")
+library(googlesheets)
 ```
+
+Reading a spreadsheet
+```{r}
+sheets_url="https://docs.google.com/spreadsheets/d/18KQQd4LY5k8Ucux1MvWCsQGQJlvd0ECTnn-3ixdOKFM/edit#gid=0"
+gsurl1=gs_url(sheets_url)
+gsurl1
+date_accessed=date()
+date_accessed
+
+```
+
+
+
 
 ## R Markdown
 
