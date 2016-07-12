@@ -45,15 +45,61 @@ result <- with(tmp,as.numeric(tmp$"Years of R experience")>2)
 Convert the logical variable from #6 into a factor with labels "Skilled" and "Learning"
 
 ```{r}
-
 df<-as.factor(result)
 levels(df)<- c("Skilled", "Learning")
+```
 
+##########JSON
+Install stuff
+```{r}
+
+
+
+github_url = "https://api.github.com/users/jtleek/repos"
+
+install.packages("jsonlite")
+library(jsonlite)
+jsonData <- fromJSON(github_url)
+dim(jsonData)
+jsonData$name
 
 ```
 
 
+Exploring
+```{r}
+table(sapply(jsonData,class))
+dim(jsonData$owner)
+names(jsonData$owner)
 
+
+
+```
+
+Json lab : 
+
+Get Hadley's repo
+
+```{r}
+github_url = "https://api.github.com/users/hadley/repos"
+jsonData <- fromJSON(github_url)
+dim(jsonData)
+jsonData$name
+
+```
+How many stars does he have on each repository?
+
+```{r}
+jsonData$stargazers_count
+```
+
+
+
+How many open issues are there?
+
+```{r}
+jsonData$open_issues_count
+```
 
 
 
